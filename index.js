@@ -50,7 +50,7 @@ let low = '2'; // don't make this 1!
 let high = 'C';
 let colors = [...new Array(8).keys()]
     .map(i => i.toString(2).padStart(3, '0'))
-    // .map(s => [...s].reverse().join(''))
+    .map(s => [...s].reverse().join(''))
     .map(s => s.replaceAll('0', low))
     .map(s => s.replaceAll('1', high))
     .map(s => `#${s}`)
@@ -269,22 +269,15 @@ function matrixi([[a, b], [c, d]]) {
         [-c/determinate, a/determinate],
     ];
 }
-
 function foo(x, y) {
-    const r3 = Math.sqrt(3);
-    // const a = x/r3 - y/3;
-    // const b = 2*y/3;
-    // const b = y/r3 - x/3;
-    // const a = 2*x/3;
     const [a, b] = matrixm([x, y], matrixi(matrix));
     return round([a/radius, b/radius]);
 }
 function drawCell(context, a, b, col) {
-    const r3 = Math.sqrt(3);
     const [x, y] = matrixm([a, b], matrix);
     drawCircle(context, centre.x + x*radius, centre.y + y*radius, radius/2, col);
 }
-function load(game, ms=500, zoom=1) {
+function load(game, ms=0, zoom=1) {
     function ArrayPlusDelay(array, delegate, delay) {
       let i = 0;
       let interval = setInterval(() => {
@@ -305,3 +298,7 @@ function load(game, ms=500, zoom=1) {
     }
     return ArrayPlusDelay(game, show, ms);
 }
+(n => load(
+    [...new Array(1+3*n*(2*n+1)).keys()]
+        .map(n => 1+n*6),
+))(4);
