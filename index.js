@@ -1,4 +1,4 @@
-function toRS(x) {
+function toQRS(x) {
     let l = Math.ceil((Math.sqrt(1+8*(x/6))-1)/2);
     // https://en.wikipedia.org/wiki/Centered_hexagonal_number#:~:text=Expressing%20the%20formula%20as
     let y = x && x-(1+3*l*(l-1));
@@ -11,6 +11,51 @@ function toRS(x) {
         s: -z.at((segment-1)%6),
     }
 }
+
+function fromQRS(qrs) {
+    let _ = -1;
+    let cube = [
+        _,_,_,
+        _,2,2,
+        _,3,_,
+        
+        _,0,1,
+        4,_,1,
+        4,3,_,
+        
+        _,0,_,
+        5,5,_,
+        _,_,_,
+    ];
+
+    bla = (c, max) => c == max ? 2 : (c == -max) ? 0 : 1;
+    let ring = Math.max(...qrs.map(Math.abs));
+    let sectant = cube[qrs.reduce((sum, c, i) => {
+        return sum+3**i*bla(c, ring);
+    }, 0)];
+    let [q, r, s] = qrs;
+    let i = [q, -s, r, -q, s, -r].at(sectant);
+    return [ring, sectant, i];
+}
+
+function fromLSI([l, s, i]) {
+    return l ? 3*l*(l-1)+l*s+i+1 : l;
+}
+
+const indexs = [
+    0,
+    0, 0, 0, 0, 0, 0,
+    0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
+    0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2,
+];
+
+const levels = [
+    0,
+    1, 1, 1, 1, 1, 1,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+];
+
 const tests = [   //  I
     // Level 0
     [+0, +0, +0], //  0
@@ -217,7 +262,7 @@ function load(game, ms=500, zoom=1) {
     function show(n) {
         // let [a, b] = split(n);
         // toggle(a, b);
-        let { q, r, s } = toRS(n);
+        let { q, r, s } = toQRS(n);
         toggle(r, s);
         draw();
         radius *= zoom;
